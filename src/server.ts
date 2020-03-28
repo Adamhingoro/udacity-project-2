@@ -31,6 +31,15 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
   
+  app.get( "/filteredimage", async ( req, res ) => {
+    const image_url : string = req.query.image_url;
+    if(!image_url){
+      res.status(400).send("Couldn't find image_url in the URL");
+    }
+    var filtered : string = await filterImageFromURL(image_url);
+    res.status(200).sendFile(filtered);
+    await deleteLocalFiles([filtered]);
+  } );
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
