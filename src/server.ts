@@ -47,8 +47,10 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     res.status(200).sendFile(filtered);
 
     // delete the file once output
+    // We are using on finish event I dont know why the simple code was not working. 
     res.on('finish', function() {
       try {
+        // The Util function wants a array. But I wanted to delete a single file. 
         fs.unlink(filtered , ()=>{
           console.log("File deleted" );
         }); 
