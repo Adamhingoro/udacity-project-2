@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import fs from 'fs';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
 (async () => {
@@ -33,7 +34,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   
   app.get( "/filteredimage", async ( req, res ) => {
 
-    const image_url : string = req.query.image_url;
+    var image_url : string = req.query.image_url;
     // checking if the image_url is set or not
     if(!image_url){
       res.status(400).send("Couldn't find image_url in the URL");
@@ -46,7 +47,15 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     res.status(200).sendFile(filtered);
 
     // delete the file once output
-    await deleteLocalFiles([filtered]);
+    res.on('finish', function() {
+      try {
+        fs.unlink(filtered , ()=>{
+          console.log("File deleted" );
+        }); 
+      } catch(e) {
+        console.log("Error deleting file ", filtered); 
+      }
+    });
   } );
   // Root Endpoint
   // Displays a simple message to the user
